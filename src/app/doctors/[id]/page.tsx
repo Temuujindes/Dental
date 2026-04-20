@@ -17,7 +17,7 @@ type Doctor = {
   rating: number;
 };
 
-type Slot = { id: string; startTime: string; endTime: string; isBooked: boolean };
+type Slot = { startTime: string; endTime: string; isBooked: boolean; isUnavailable?: boolean };
 
 export default function DoctorProfilePage() {
   const { id } = useParams<{ id: string }>();
@@ -33,9 +33,10 @@ export default function DoctorProfilePage() {
       Array.from({ length: 7 }).map((_, index) => {
         const date = new Date();
         date.setDate(date.getDate() + index);
+        const dayNames = ["Ня", "Да", "Мя", "Лх", "Пү", "Ба", "Бя"];
         return {
           key: format(date, "yyyy-MM-dd"),
-          label: format(date, "EEE, MMM d")
+          label: `${dayNames[date.getDay()]}, ${format(date, "MM/dd")}`
         };
       }),
     []
@@ -50,7 +51,7 @@ export default function DoctorProfilePage() {
 
   useEffect(() => {
     if (!doctor) return;
-    fetch(`/api/appointments?doctorId=${doctor.id}&date=${selectedDate}`)
+    fetch(`/api/availability?doctorId=${doctor.id}&date=${selectedDate}`)
       .then((res) => res.json())
       .then((data) => setSlots(data.slots ?? []));
   }, [doctor, selectedDate]);
@@ -118,14 +119,14 @@ export default function DoctorProfilePage() {
         <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-5">
           {slots.map((slot) => (
             <button
-              key={slot.id}
+              key={slot.startTime}
               type="button"
-              disabled={slot.isBooked}
-              onClick={() => setSelectedSlot(slot.id)}
+              disabled={slot.isBooked || slot.isUnavailable}
+              onClick={() => setSelectedSlot(slot.startTime)}
               className={`rounded-xl border px-2 py-2 text-sm font-medium transition duration-200 ${
-                slot.isBooked
+                slot.isBooked || slot.isUnavailable
                   ? "cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400"
-                  : slot.id === selectedSlot
+                  : slot.startTime === selectedSlot
                     ? "border-blue-600 bg-blue-600 text-white"
                     : "border-gray-200 hover:border-blue-400"
               }`}

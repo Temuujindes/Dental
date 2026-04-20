@@ -6,16 +6,16 @@ import { prisma } from "@/lib/prisma";
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getServerSession(authOptions);
   if (session?.user.role !== "ADMIN") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ error: "Хандах эрхгүй" }, { status: 403 });
   }
   const { id } = await params;
   const { status } = await request.json();
   if (!["PENDING", "CONFIRMED", "COMPLETED", "CANCELLED"].includes(status)) {
-    return NextResponse.json({ error: "Invalid status" }, { status: 400 });
+    return NextResponse.json({ error: "Төлөв буруу байна" }, { status: 400 });
   }
 
   const existing = await prisma.appointment.findUnique({ where: { id }, select: { status: true } });
-  if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (!existing) return NextResponse.json({ error: "Захиалга олдсонгүй" }, { status: 404 });
 
   const current = existing.status;
   const validTransitions: Record<string, string[]> = {
@@ -25,7 +25,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     CANCELLED: []
   };
   if (!validTransitions[current].includes(status)) {
-    return NextResponse.json({ error: `Invalid transition: ${current} -> ${status}` }, { status: 409 });
+    return NextResponse.json({ error: `Төлөв солилт боломжгүй: ${current} -> ${status}` }, { status: 409 });
   }
 
   const appointment = await prisma.appointment.update({
@@ -37,19 +37,19 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
 export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getServerSession(authOptions);
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return NextResponse.json({ error: "Нэвтэрнэ үү" }, { status: 401 });
   const { id } = await params;
   const appointment = await prisma.appointment.findUnique({
     where: { id },
     select: { patientId: true, status: true }
   });
-  if (!appointment) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (!appointment) return NextResponse.json({ error: "Захиалга олдсонгүй" }, { status: 404 });
   const isAdmin = session.user.role === "ADMIN";
   if (!isAdmin && appointment.patientId !== session.user.id) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ error: "Хандах эрхгүй" }, { status: 403 });
   }
   if (!isAdmin && appointment.status !== "PENDING") {
-    return NextResponse.json({ error: "Only pending appointment can be cancelled" }, { status: 409 });
+    return NextResponse.json({ error: "Зөвхөн хүлээгдэж буй захиалгыг цуцална" }, { status: 409 });
   }
   if (appointment.status === "CANCELLED") {
     return NextResponse.json({ ok: true });

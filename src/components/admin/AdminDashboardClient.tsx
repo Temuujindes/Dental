@@ -82,8 +82,8 @@ export default function AdminDashboardClient({ data }: { data: DashboardData }) 
               {(calendarMode === "day" ? [new Date()] : Array.from({ length: 7 }).map((_, idx) => new Date(Date.now() + idx * 86400000))).map(
                 (date) => (
                   <div key={date.toISOString()} className="rounded-xl border border-gray-200 p-3">
-                    <p className="text-xs text-gray-500">{format(date, "EEE")}</p>
-                    <p className="text-sm font-semibold text-gray-900">{format(date, "MMM d")}</p>
+                    <p className="text-xs text-gray-500">{["Ня", "Да", "Мя", "Лх", "Пү", "Ба", "Бя"][date.getDay()]}</p>
+                    <p className="text-sm font-semibold text-gray-900">{format(date, "MM/dd")}</p>
                   </div>
                 )
               )}

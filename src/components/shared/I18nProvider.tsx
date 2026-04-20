@@ -15,15 +15,11 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(defaultLocale);
 
   useEffect(() => {
-    const saved = window.localStorage.getItem("locale");
-    if (saved === "en" || saved === "mn") {
-      setLocaleState(saved);
-    }
+    setLocaleState(defaultLocale);
   }, []);
 
   const setLocale = (nextLocale: Locale) => {
     setLocaleState(nextLocale);
-    window.localStorage.setItem("locale", nextLocale);
   };
 
   const value = useMemo(

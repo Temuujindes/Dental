@@ -30,8 +30,8 @@ model Doctor {
   createdAt    DateTime         @default(now())
   appointments Appointment[]
   schedules    DoctorSchedule[]
-  breakTimes   BreakTime[]
-  blockedSlots BlockedSlot[]
+  breaks       DoctorBreak[]
+  blocks       DoctorBlock[]
 }
 
 model Appointment {
@@ -50,6 +50,7 @@ model Appointment {
   updatedAt DateTime          @updatedAt
 
   @@unique([doctorId, date, startTime])
+  @@index([doctorId, date, status])
 }
 
 enum Role {
@@ -64,30 +65,41 @@ enum AppointmentStatus {
   COMPLETED
 }
 
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
 model DoctorSchedule {
-  id                  String   @id @default(cuid())
-  doctorId            String
-  doctor              Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
-  dayOfWeek           Int
-  startTime           String
-  endTime             String
-  slotDurationMinutes Int      @default(30)
+  id        String    @id @default(cuid())
+  doctorId  String
+  doctor    Doctor    @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  dayOfWeek DayOfWeek
+  startTime String
+  endTime   String
+  isWorking Boolean   @default(true)
 
   @@unique([doctorId, dayOfWeek])
 }
 
-model BreakTime {
-  id        String   @id @default(cuid())
+model DoctorBreak {
+  id        String    @id @default(cuid())
   doctorId  String
-  doctor    Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
-  dayOfWeek Int
+  doctor    Doctor    @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  dayOfWeek DayOfWeek
   startTime String
   endTime   String
+  isActive  Boolean   @default(true)
 
   @@unique([doctorId, dayOfWeek, startTime])
 }
 
-model BlockedSlot {
+model DoctorBlock {
   id        String   @id @default(cuid())
   doctorId  String
   doctor    Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
@@ -95,5 +107,6 @@ model BlockedSlot {
   startTime String
   endTime   String
   reason    String?
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
 }

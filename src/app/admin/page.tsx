@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import StatsCard from "@/components/admin/StatsCard";
-import StatusBadge from "@/components/admin/StatusBadge";
+import AdminAppointmentsTable from "@/components/admin/AdminAppointmentsTable";
 
 export const dynamic = "force-dynamic";
 
@@ -32,11 +32,21 @@ export default async function AdminPage() {
     orderBy: [{ date: "desc" }, { startTime: "desc" }],
     take: 20
   });
+  const weekDates = Array.from({ length: 7 }).map((_, index) => {
+    const d = new Date(today);
+    d.setDate(today.getDate() + index);
+    const next = new Date(d);
+    next.setDate(d.getDate() + 1);
+    const count = appointments.filter((item) => item.date >= d && item.date < next).length;
+    return { date: d, count };
+  });
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 pb-20">
-      <h1 className="text-2xl font-bold">Админ хяналтын самбар</h1>
-      <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+    <div className="section pb-20 md:pb-12">
+      <h1 className="page-title">Админ хяналтын самбар</h1>
+      <p className="page-sub">Өнөөдөр: {new Date().toLocaleDateString("mn-MN")}</p>
+
+      <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
         <StatsCard label="Нийт" value={totalAppointments} color="blue" />
         <StatsCard label="Хүлээгдэж буй" value={pendingAppointments} color="yellow" />
         <StatsCard label="Баталгаажсан" value={confirmedAppointments} color="green" />
@@ -44,32 +54,23 @@ export default async function AdminPage() {
         <StatsCard label="Дууссан" value={completedAppointments} color="gray" />
         <StatsCard label="Өнөөдөр" value={todayCount} color="blue" />
       </div>
-      <div className="mt-4 rounded-2xl border bg-white p-4 shadow-sm">
-        <p className="mb-2 text-sm text-gray-600">Эмчийн тоо: {totalDoctors}</p>
-        <div className="overflow-auto">
-          <table className="min-w-full text-sm">
-            <thead>
-              <tr className="border-b text-left text-gray-500">
-                <th className="py-2">Өвчтөн</th>
-                <th className="py-2">Эмч</th>
-                <th className="py-2">Огноо & цаг</th>
-                <th className="py-2">Үйлчилгээ</th>
-                <th className="py-2">Статус</th>
-              </tr>
-            </thead>
-            <tbody>
-              {appointments.map((item) => (
-                <tr key={item.id} className="border-b">
-                  <td className="py-2">{item.patient.name}</td>
-                  <td className="py-2">{item.doctor.name}</td>
-                  <td className="py-2">{new Date(item.date).toLocaleDateString()} {item.startTime}</td>
-                  <td className="py-2">{item.service}</td>
-                  <td className="py-2"><StatusBadge status={item.status} /></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+
+      <div className="mt-8 card p-4 sm:p-5">
+        <p className="mb-3 text-sm leading-relaxed text-slate-600">Эмчийн тоо: {totalDoctors}</p>
+        <h2 className="text-lg font-semibold text-slate-900">Календарь (7 хоног)</h2>
+        <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-7">
+          {weekDates.map((item) => (
+            <div key={item.date.toISOString()} className="rounded-xl border border-slate-200 p-3">
+              <p className="text-xs text-slate-500">{item.date.toLocaleDateString("mn-MN", { weekday: "short" })}</p>
+              <p className="text-sm font-medium text-slate-900">{item.date.toLocaleDateString("mn-MN", { month: "2-digit", day: "2-digit" })}</p>
+              <p className="mt-1 text-xs text-slate-500">{item.count} захиалга</p>
+            </div>
+          ))}
         </div>
+      </div>
+
+      <div className="mt-8">
+        <AdminAppointmentsTable data={appointments} />
       </div>
     </div>
   );

@@ -77,7 +77,7 @@ export default function PatientAppointmentsClient({ appointments }: { appointmen
                   <p className="font-semibold text-gray-900">{item.doctor.name}</p>
                   <p className="text-sm text-blue-700">{item.doctor.specialty}</p>
                   <p className="mt-2 text-sm text-gray-600">
-                    {format(new Date(item.date), "PPP")} - {item.startTime} to {item.endTime}
+                    {format(new Date(item.date), "PPP")} - {item.startTime} - {item.endTime}
                   </p>
                   <p className="mt-1 text-sm text-gray-500">{item.service}</p>
                 </div>
@@ -104,11 +104,11 @@ export default function PatientAppointmentsClient({ appointments }: { appointmen
 }
 
 function StatusBadge({ status }: { status: Appointment["status"] }) {
-  const classes: Record<Appointment["status"], string> = {
-    PENDING: "bg-amber-100 text-amber-700",
-    CONFIRMED: "bg-emerald-100 text-emerald-700",
-    COMPLETED: "bg-blue-100 text-blue-700",
-    CANCELLED: "bg-gray-200 text-gray-700"
+  const classes: Record<Appointment["status"], { label: string; className: string }> = {
+    PENDING: { label: "Хүлээгдэж буй", className: "bg-amber-100 text-amber-700" },
+    CONFIRMED: { label: "Баталгаажсан", className: "bg-emerald-100 text-emerald-700" },
+    COMPLETED: { label: "Дууссан", className: "bg-blue-100 text-blue-700" },
+    CANCELLED: { label: "Цуцлагдсан", className: "bg-gray-200 text-gray-700" }
   };
-  return <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${classes[status]}`}>{status}</span>;
+  return <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${classes[status].className}`}>{classes[status].label}</span>;
 }

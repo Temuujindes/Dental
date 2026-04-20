@@ -1,12 +1,34 @@
 import { AppointmentStatus } from "@prisma/client";
 
 export default function StatusBadge({ status }: { status: AppointmentStatus }) {
-  const classes: Record<AppointmentStatus, string> = {
-    PENDING: "bg-yellow-100 text-yellow-800",
-    CONFIRMED: "bg-green-100 text-green-800",
-    CANCELLED: "bg-red-100 text-red-800",
-    COMPLETED: "bg-gray-100 text-gray-700"
+  const config: Record<AppointmentStatus, { label: string; classes: string; dot: string }> = {
+    PENDING: {
+      label: "Хүлээгдэж буй",
+      classes: "border border-amber-200 bg-amber-50 text-amber-700",
+      dot: "bg-amber-400"
+    },
+    CONFIRMED: {
+      label: "Баталгаажсан",
+      classes: "border border-green-200 bg-green-50 text-green-700",
+      dot: "bg-green-400"
+    },
+    CANCELLED: {
+      label: "Цуцлагдсан",
+      classes: "border border-red-200 bg-red-50 text-red-700",
+      dot: "bg-red-400"
+    },
+    COMPLETED: {
+      label: "Дууссан",
+      classes: "border border-slate-200 bg-slate-100 text-slate-600",
+      dot: "bg-slate-400"
+    }
   };
+  const item = config[status];
 
-  return <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${classes[status]}`}>{status}</span>;
+  return (
+    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${item.classes}`}>
+      <span className={`h-1.5 w-1.5 rounded-full ${item.dot}`} />
+      {item.label}
+    </span>
+  );
 }

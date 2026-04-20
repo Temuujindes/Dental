@@ -16,6 +16,12 @@ type Appointment = {
 };
 
 type StatusFilter = "ALL" | Appointment["status"];
+const statusLabel: Record<Appointment["status"], string> = {
+  PENDING: "Хүлээгдэж буй",
+  CONFIRMED: "Баталгаажсан",
+  COMPLETED: "Дууссан",
+  CANCELLED: "Цуцлагдсан"
+};
 
 export default function AdminAppointmentsTable({ data }: { data: Appointment[] }) {
   const { t } = useI18n();
@@ -43,10 +49,10 @@ export default function AdminAppointmentsTable({ data }: { data: Appointment[] }
 
   async function updateStatus(id: string, nextStatus: Appointment["status"]) {
     setUpdatingId(id);
-    const res = await fetch(`/api/appointments/${id}`, {
+    const res = await fetch(`/api/admin/appointments`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: nextStatus })
+      body: JSON.stringify({ id, status: nextStatus })
     });
     setUpdatingId(null);
     if (!res.ok) return;
@@ -74,7 +80,7 @@ export default function AdminAppointmentsTable({ data }: { data: Appointment[] }
         <select className="input" value={status} onChange={(e) => setStatus(e.target.value as StatusFilter)}>
           {["ALL", "PENDING", "CONFIRMED", "COMPLETED", "CANCELLED"].map((value) => (
             <option key={value} value={value}>
-              {value === "ALL" ? t.admin.all : value}
+              {value === "ALL" ? t.admin.all : statusLabel[value as Appointment["status"]]}
             </option>
           ))}
         </select>
@@ -94,7 +100,7 @@ export default function AdminAppointmentsTable({ data }: { data: Appointment[] }
                   </p>
                   <p className="text-gray-500">{item.patient.email}</p>
                   <p className="mt-1 text-gray-700">
-                    {format(new Date(item.date), "PPP")} - {item.startTime} to {item.endTime}
+                    {format(new Date(item.date), "PPP")} - {item.startTime} - {item.endTime}
                   </p>
                   <p className="text-gray-600">{item.service}</p>
                 </div>
@@ -157,5 +163,5 @@ function StatusBadge({ status }: { status: Appointment["status"] }) {
     COMPLETED: "bg-blue-100 text-blue-700",
     CANCELLED: "bg-red-100 text-red-700"
   };
-  return <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${classes[status]}`}>{status}</span>;
+  return <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${classes[status]}`}>{statusLabel[status]}</span>;
 }

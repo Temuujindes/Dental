@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+const DAY_NAMES = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"] as const;
 
 export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
@@ -19,8 +20,8 @@ export async function POST(request: Request) {
 
   const { doctorId, dayOfWeek, startTime, endTime } = parsed.data;
   await prisma.$executeRaw`
-    INSERT INTO "BreakTime" ("id", "doctorId", "dayOfWeek", "startTime", "endTime")
-    VALUES (gen_random_uuid()::text, ${doctorId}, ${dayOfWeek}, ${startTime}, ${endTime})
+    INSERT INTO "DoctorBreak" ("id", "doctorId", "dayOfWeek", "startTime", "endTime", "isActive")
+    VALUES (gen_random_uuid()::text, ${doctorId}, ${DAY_NAMES[dayOfWeek]}::"DayOfWeek", ${startTime}, ${endTime}, true)
   `;
   return NextResponse.json({ ok: true }, { status: 201 });
 }

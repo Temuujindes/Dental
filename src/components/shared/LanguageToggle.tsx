@@ -1,20 +1,19 @@
 "use client";
 
-import { type Locale } from "@/lib/i18n";
 import { useI18n } from "@/components/shared/I18nProvider";
 
 export default function LanguageToggle() {
-  const { locale, setLocale } = useI18n();
-
-  function buttonClasses(target: Locale) {
-    return locale === target
-      ? "rounded-lg px-2.5 py-1.5 text-xs font-semibold bg-blue-600 text-white shadow-sm"
-      : "rounded-lg px-2.5 py-1.5 text-xs font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200";
-  }
+  const { setLocale } = useI18n();
 
   return (
-    <div className="flex items-center gap-1" aria-label="Language switcher">
-   
+    <div className="flex items-center gap-1" aria-label="Хэлний сонголт">
+      <button
+        type="button"
+        onClick={() => setLocale("mn")}
+        className="rounded-lg bg-blue-600 px-2.5 py-1.5 text-xs font-medium text-white transition-colors duration-150"
+      >
+        Монгол
+      </button>
     </div>
   );
 }

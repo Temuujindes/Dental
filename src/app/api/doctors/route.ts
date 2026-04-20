@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+const DAY_NAMES = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"] as const;
 
 export async function GET() {
   const doctors = await prisma.doctor.findMany({
@@ -31,10 +32,10 @@ export async function POST(request: Request) {
   const payload = schema.parse(await request.json());
   const doctor = await prisma.doctor.create({ data: payload });
 
-  for (const dayOfWeek of [1, 2, 3, 4, 5, 6]) {
+  for (const dayOfWeek of DAY_NAMES) {
     await prisma.$executeRaw`
-      INSERT INTO "DoctorSchedule" ("id", "doctorId", "dayOfWeek", "startTime", "endTime", "slotDurationMinutes")
-      VALUES (gen_random_uuid()::text, ${doctor.id}, ${dayOfWeek}, '09:00', '17:00', 30)
+      INSERT INTO "DoctorSchedule" ("id", "doctorId", "dayOfWeek", "startTime", "endTime", "isWorking")
+      VALUES (gen_random_uuid()::text, ${doctor.id}, ${dayOfWeek}::"DayOfWeek", '09:00', '17:00', true)
     `;
   }
 

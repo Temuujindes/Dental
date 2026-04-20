@@ -1,0 +1,173 @@
+"use client";
+
+import Link from "next/link";
+import { useMemo, useState } from "react";
+
+type Doctor = {
+  id: string;
+  name: string;
+  specialty: string;
+  bio: string;
+  imageUrl?: string | null;
+  rating: number;
+  experience: number;
+  available: boolean;
+};
+
+type FormState = {
+  name: string;
+  specialty: string;
+  bio: string;
+  imageUrl: string;
+  rating: string;
+  experience: string;
+};
+
+const initialForm: FormState = {
+  name: "",
+  specialty: "",
+  bio: "",
+  imageUrl: "",
+  rating: "5",
+  experience: "1"
+};
+
+export default function AdminDoctorsClient({ initialDoctors }: { initialDoctors: Doctor[] }) {
+  const [doctors, setDoctors] = useState(initialDoctors);
+  const [form, setForm] = useState<FormState>(initialForm);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  const sortedDoctors = useMemo(() => [...doctors].sort((a, b) => Number(b.available) - Number(a.available)), [doctors]);
+
+  async function addDoctor(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setSaving(true);
+    setError("");
+    const payload = {
+      name: form.name.trim(),
+      specialty: form.specialty.trim(),
+      bio: form.bio.trim(),
+      imageUrl: form.imageUrl.trim() || null,
+      rating: Number(form.rating),
+      experience: Number(form.experience),
+      available: true
+    };
+
+    const res = await fetch("/api/doctors", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    setSaving(false);
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setError(data.error ?? "Эмч нэмэх үед алдаа гарлаа");
+      return;
+    }
+
+    const created = (await res.json()) as Doctor;
+    setDoctors((prev) => [created, ...prev]);
+    setForm(initialForm);
+  }
+
+  async function deactivateDoctor(id: string) {
+    const ok = window.confirm("Энэ эмчийг идэвхгүй болгох уу?");
+    if (!ok) return;
+    const res = await fetch(`/api/doctors/${id}`, { method: "DELETE" });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setError(data.error ?? "Эмч устгах үед алдаа гарлаа");
+      return;
+    }
+    setDoctors((prev) => prev.map((item) => (item.id === id ? { ...item, available: false } : item)));
+  }
+
+  return (
+    <div className="section pb-20 md:pb-10">
+      <h1 className="page-title">Эмч нар</h1>
+      <p className="page-sub">Эмч нэмэх, идэвхгүй болгох, хуваарь удирдах</p>
+
+      <form className="card mt-8 space-y-4 p-5" onSubmit={addDoctor}>
+        <h2 className="text-lg font-semibold text-slate-900">Шинэ эмч нэмэх</h2>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div>
+            <label className="label">Нэр</label>
+            <input className="input" value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} required />
+          </div>
+          <div>
+            <label className="label">Төрөл</label>
+            <input className="input" value={form.specialty} onChange={(e) => setForm((p) => ({ ...p, specialty: e.target.value }))} required />
+          </div>
+          <div>
+            <label className="label">Үнэлгээ</label>
+            <input
+              type="number"
+              min={0}
+              max={5}
+              step={0.1}
+              className="input"
+              value={form.rating}
+              onChange={(e) => setForm((p) => ({ ...p, rating: e.target.value }))}
+              required
+            />
+          </div>
+          <div>
+            <label className="label">Туршлага (жил)</label>
+            <input
+              type="number"
+              min={0}
+              className="input"
+              value={form.experience}
+              onChange={(e) => setForm((p) => ({ ...p, experience: e.target.value }))}
+              required
+            />
+          </div>
+        </div>
+        <div>
+          <label className="label">Зураг URL (заавал биш)</label>
+          <input className="input" value={form.imageUrl} onChange={(e) => setForm((p) => ({ ...p, imageUrl: e.target.value }))} />
+        </div>
+        <div>
+          <label className="label">Танилцуулга</label>
+          <textarea className="input min-h-24" value={form.bio} onChange={(e) => setForm((p) => ({ ...p, bio: e.target.value }))} required />
+        </div>
+        {error ? <p className="text-sm text-red-600">{error}</p> : null}
+        <button className="btn-primary" type="submit" disabled={saving}>
+          {saving ? "Нэмж байна..." : "Эмч нэмэх"}
+        </button>
+      </form>
+
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {sortedDoctors.map((doctor) => (
+          <article key={doctor.id} className="card p-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-900">{doctor.name}</p>
+                <p className="text-xs text-slate-500">{doctor.specialty}</p>
+              </div>
+              <span className={`rounded-full px-2 py-1 text-xs ${doctor.available ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-600"}`}>
+                {doctor.available ? "Идэвхтэй" : "Идэвхгүй"}
+              </span>
+            </div>
+            <p className="mt-2 text-sm text-slate-600">⭐ {doctor.rating.toFixed(1)} · {doctor.experience} жил</p>
+            <p className="mt-2 line-clamp-2 text-sm text-slate-500">{doctor.bio}</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Link href={`/admin/doctors/${doctor.id}/schedule`} className="btn-outline">
+                Хуваарь
+              </Link>
+              <Link href={`/doctors/${doctor.id}`} className="btn-primary">
+                Профайл
+              </Link>
+              {doctor.available ? (
+                <button className="btn-danger" type="button" onClick={() => deactivateDoctor(doctor.id)}>
+                  Идэвхгүй болгох
+                </button>
+              ) : null}
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  );
+}

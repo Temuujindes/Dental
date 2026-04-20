@@ -1,4 +1,4 @@
-export type Locale = "en" | "mn";
+export type Locale = "mn";
 
 export const defaultLocale: Locale = "mn";
 
@@ -130,133 +130,6 @@ export type TranslationSchema = {
 };
 
 export const messages: Record<Locale, TranslationSchema> = {
-  en: {
-    common: {
-      appName: "DentaBook",
-      loading: "Loading..."
-    },
-    nav: {
-      doctors: "Doctors",
-      book: "Book",
-      appointments: "My Appointments",
-      admin: "Admin",
-      signOut: "Sign out",
-      logIn: "Log in",
-      signUp: "Sign up"
-    },
-    home: {
-      title: "Dental booking made simple",
-      description:
-        "Book appointments with trusted dentists, manage upcoming visits, and let your clinic team handle confirmations with the admin dashboard.",
-      bookCta: "Book Appointment",
-      browseCta: "Browse Doctors",
-      benefitsTitle: "Why clinics choose DentaBook",
-      benefitFast: "Fast booking in a few taps",
-      benefitNoConflict: "Conflict-free scheduling system",
-      benefitCompare: "Compare doctors before booking",
-      previewTitle: "Top rated specialists",
-      previewDescription: "Explore profiles, ratings, and expertise before confirming your visit.",
-      footerTagline: "Premium dental scheduling platform for modern clinics."
-    },
-    booking: {
-      title: "Book Appointment",
-      subtitle: "Choose a dentist, pick a time, and confirm your visit.",
-      doctor: "Doctor",
-      selectDoctor: "Select doctor",
-      date: "Date",
-      slots: "Available time slots",
-      service: "Service",
-      notes: "Notes",
-      confirm: "Confirm Booking",
-      continue: "Continue",
-      back: "Back",
-      selectedSummary: "You selected",
-      selectedSlot: "Selected slot",
-      chooseDoctorStep: "Choose Doctor",
-      chooseTimeStep: "Date & Time",
-      confirmStep: "Confirm",
-      noSlots: "No available slots for this date.",
-      success: "Appointment booked successfully.",
-      failed: "Unable to book appointment.",
-      instantFeedback: "Instant confirmation and quick status updates."
-    },
-    doctors: {
-      title: "Our Doctors",
-      subtitle: "Book with experienced dental specialists.",
-      years: "years exp.",
-      rating: "rating",
-      book: "Book appointment",
-      viewProfile: "View profile"
-    },
-    doctorProfile: {
-      scheduleTitle: "Weekly schedule",
-      scheduleSubtitle: "Pick a day and see available times instantly.",
-      availableSlots: "Available time slots",
-      noSlots: "No slots available for this day.",
-      bookNow: "Book Now",
-      notFound: "Doctor not found.",
-      backToDoctors: "Back to doctors"
-    },
-    admin: {
-      title: "Admin Dashboard",
-      subtitle: "Manage clinic operations from one clean workspace.",
-      sidebarDoctors: "Doctors",
-      sidebarAppointments: "Appointments",
-      sidebarCalendar: "Calendar",
-      sidebarSettings: "Settings",
-      todayAppointments: "Today appointments",
-      totalBookings: "Total bookings",
-      pending: "Pending",
-      completed: "Completed",
-      doctors: "Doctors",
-      patients: "Patients",
-      day: "Day",
-      week: "Week",
-      filtersTitle: "Filters",
-      filterDoctor: "Doctor",
-      filterStatus: "Status",
-      filterDate: "Date",
-      searchPlaceholder: "Search patient / doctor / service",
-      noResults: "No matching appointments found.",
-      all: "ALL",
-      confirm: "Confirm",
-      cancel: "Cancel",
-      complete: "Complete"
-    },
-    auth: {
-      loginTitle: "Log in",
-      registerTitle: "Register",
-      loginSubtitle: "Sign in to manage your bookings quickly.",
-      registerSubtitle: "Create your account to book with top dental specialists.",
-      email: "Email",
-      password: "Password",
-      confirmPassword: "Confirm password",
-      fullName: "Full name",
-      signIn: "Sign In",
-      createAccount: "Create account",
-      noAccount: "Don't have an account?",
-      hasAccount: "Already have an account?",
-      goToRegister: "Create one",
-      goToLogin: "Go to login",
-      signingIn: "Signing in...",
-      creatingAccount: "Creating account...",
-      passwordHint: "Use at least 8 characters.",
-      passwordsDoNotMatch: "Passwords do not match.",
-      accountCreated: "Account created successfully. Please log in.",
-      invalidCredentials: "Invalid credentials",
-      registrationFailed: "Registration failed"
-    },
-    appointments: {
-      title: "My Appointments",
-      subtitle: "Track upcoming visits and manage booking status.",
-      upcoming: "UPCOMING",
-      past: "PAST",
-      cancelled: "CANCELLED",
-      empty: "No appointments in this section yet.",
-      cancel: "Cancel",
-      cancelling: "Cancelling..."
-    }
-  },
   mn: {
     common: {
       appName: "DentaBook",
@@ -278,12 +151,12 @@ export const messages: Record<Locale, TranslationSchema> = {
       bookCta: "Цаг захиалах",
       browseCta: "Эмч үзэх",
       benefitsTitle: "Яагаад эмнэлгүүд DentaBook сонгодог вэ",
-      benefitFast: "Хэдхэн товшилтоор хурдан booking",
+      benefitFast: "Хэдхэн товшилтоор хурдан захиалах",
       benefitNoConflict: "Давхцалгүй цагийн систем",
       benefitCompare: "Эмч нарыг харьцуулж сонгох боломж",
       previewTitle: "Өндөр үнэлгээтэй эмч нар",
       previewDescription: "Профайл, үнэлгээ, туршлагаа харьцуулж байгаад цаг захиалаарай.",
-      footerTagline: "Орчин үеийн шүдний эмнэлэгт зориулсан premium захиалгын систем."
+      footerTagline: "Орчин үеийн шүдний эмнэлэгт зориулсан дэвшилтэт захиалгын систем."
     },
     booking: {
       title: "Цаг захиалах",

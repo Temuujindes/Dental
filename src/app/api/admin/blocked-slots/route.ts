@@ -22,8 +22,8 @@ export async function POST(request: Request) {
   const day = new Date(date);
   day.setHours(0, 0, 0, 0);
   await prisma.$executeRaw`
-    INSERT INTO "BlockedSlot" ("id","doctorId","date","startTime","endTime","reason","createdAt")
-    VALUES (gen_random_uuid()::text, ${doctorId}, ${day}, ${startTime}, ${endTime}, ${reason ?? null}, NOW())
+    INSERT INTO "DoctorBlock" ("id","doctorId","date","startTime","endTime","reason","isActive","createdAt")
+    VALUES (gen_random_uuid()::text, ${doctorId}, ${day}, ${startTime}, ${endTime}, ${reason ?? null}, true, NOW())
   `;
   return NextResponse.json({ ok: true }, { status: 201 });
 }

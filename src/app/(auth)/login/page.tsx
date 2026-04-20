@@ -41,7 +41,7 @@ export default function LoginPage() {
             <input
               className="input"
               type="email"
-              placeholder="name@email.com"
+              placeholder="жишээ: name@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -61,7 +61,7 @@ export default function LoginPage() {
               />
               <button
                 type="button"
-                aria-label={showPassword ? "Hide password" : "Show password"}
+                aria-label={showPassword ? "Нууц үг нуух" : "Нууц үг харах"}
                 className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1 text-gray-500 transition hover:bg-gray-100"
                 onClick={() => setShowPassword((prev) => !prev)}
               >

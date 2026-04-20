@@ -7,6 +7,6 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ id: str
   const session = await getServerSession(authOptions);
   if (session?.user.role !== "ADMIN") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   const { id } = await params;
-  await prisma.$executeRaw`DELETE FROM "BreakTime" WHERE "id" = ${id}`;
+  await prisma.$executeRaw`UPDATE "DoctorBreak" SET "isActive" = false WHERE "id" = ${id}`;
   return NextResponse.json({ ok: true });
 }
