@@ -8,12 +8,12 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "DentaBook",
-  description: "Dental appointment booking platform"
+  description: "Монголын шүдний эмчийн цаг захиалгын платформ"
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="mn">
       <body className={inter.className}>
         <Providers>
           <Navbar />

@@ -1,12 +1,18 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { z } from "zod";
 
 export async function POST(request: Request) {
-  const { name, email, password } = await request.json();
-  if (!name || !email || !password) {
-    return NextResponse.json({ error: "All fields are required." }, { status: 400 });
-  }
+  const schema = z.object({
+    name: z.string().min(2),
+    email: z.string().email(),
+    password: z.string().min(6),
+    phone: z.string().optional()
+  });
+  const payload = schema.safeParse(await request.json());
+  if (!payload.success) return NextResponse.json({ error: payload.error.flatten() }, { status: 400 });
+  const { name, email, password, phone } = payload.data;
 
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
@@ -18,6 +24,7 @@ export async function POST(request: Request) {
     data: {
       name,
       email,
+      phone,
       password: hashedPassword,
       role: "PATIENT"
     },

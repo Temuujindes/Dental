@@ -2,6 +2,7 @@
 
 import { format } from "date-fns";
 import { useMemo, useState } from "react";
+import { useI18n } from "@/components/shared/I18nProvider";
 
 type Appointment = {
   id: string;
@@ -16,6 +17,7 @@ type Appointment = {
 type Tab = "UPCOMING" | "PAST" | "CANCELLED";
 
 export default function PatientAppointmentsClient({ appointments }: { appointments: Appointment[] }) {
+  const { t } = useI18n();
   const [tab, setTab] = useState<Tab>("UPCOMING");
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [items, setItems] = useState<Appointment[]>(appointments);
@@ -40,11 +42,17 @@ export default function PatientAppointmentsClient({ appointments }: { appointmen
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
-      <h1 className="text-3xl font-bold">My Appointments</h1>
-      <p className="mt-2 text-sm text-gray-600">Track upcoming visits and manage your booking status.</p>
+      <h1 className="text-3xl font-bold">{t.appointments.title}</h1>
+      <p className="mt-2 text-sm text-gray-600">{t.appointments.subtitle}</p>
 
       <div className="mt-6 flex flex-wrap gap-2">
-        {(["UPCOMING", "PAST", "CANCELLED"] as Tab[]).map((value) => (
+        {(
+          [
+            ["UPCOMING", t.appointments.upcoming],
+            ["PAST", t.appointments.past],
+            ["CANCELLED", t.appointments.cancelled]
+          ] as [Tab, string][]
+        ).map(([value, label]) => (
           <button
             key={value}
             type="button"
@@ -53,13 +61,13 @@ export default function PatientAppointmentsClient({ appointments }: { appointmen
               value === tab ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
             }`}
           >
-            {value}
+            {label}
           </button>
         ))}
       </div>
 
       {filtered.length === 0 ? (
-        <div className="card mt-6 p-8 text-center text-sm text-gray-500">No appointments in this section yet.</div>
+        <div className="card mt-6 p-8 text-center text-sm text-gray-500">{t.appointments.empty}</div>
       ) : (
         <div className="mt-6 grid gap-4">
           {filtered.map((item) => (
@@ -82,7 +90,7 @@ export default function PatientAppointmentsClient({ appointments }: { appointmen
                       disabled={loadingId === item.id}
                       className="btn-outline text-xs"
                     >
-                      {loadingId === item.id ? "Cancelling..." : "Cancel"}
+                      {loadingId === item.id ? t.appointments.cancelling : t.appointments.cancel}
                     </button>
                   ) : null}
                 </div>

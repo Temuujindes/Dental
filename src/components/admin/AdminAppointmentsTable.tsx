@@ -2,6 +2,7 @@
 
 import { format } from "date-fns";
 import { useMemo, useState } from "react";
+import { useI18n } from "@/components/shared/I18nProvider";
 
 type Appointment = {
   id: string;
@@ -17,10 +18,12 @@ type Appointment = {
 type StatusFilter = "ALL" | Appointment["status"];
 
 export default function AdminAppointmentsTable({ data }: { data: Appointment[] }) {
+  const { t } = useI18n();
   const [items, setItems] = useState(data);
   const [status, setStatus] = useState<StatusFilter>("ALL");
   const [query, setQuery] = useState("");
   const [doctor, setDoctor] = useState("ALL");
+  const [selectedDate, setSelectedDate] = useState("");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   const doctors = useMemo(() => ["ALL", ...Array.from(new Set(items.map((i) => i.doctor.name)))], [items]);
@@ -28,14 +31,15 @@ export default function AdminAppointmentsTable({ data }: { data: Appointment[] }
     return items.filter((item) => {
       const statusMatch = status === "ALL" || item.status === status;
       const doctorMatch = doctor === "ALL" || item.doctor.name === doctor;
+      const dateMatch = selectedDate === "" || format(new Date(item.date), "yyyy-MM-dd") === selectedDate;
       const queryMatch =
         query.trim() === "" ||
         item.patient.name.toLowerCase().includes(query.toLowerCase()) ||
         item.doctor.name.toLowerCase().includes(query.toLowerCase()) ||
         item.service.toLowerCase().includes(query.toLowerCase());
-      return statusMatch && doctorMatch && queryMatch;
+      return statusMatch && doctorMatch && dateMatch && queryMatch;
     });
-  }, [items, status, doctor, query]);
+  }, [items, status, doctor, selectedDate, query]);
 
   async function updateStatus(id: string, nextStatus: Appointment["status"]) {
     setUpdatingId(id);
@@ -50,16 +54,18 @@ export default function AdminAppointmentsTable({ data }: { data: Appointment[] }
   }
 
   return (
-    <div className="card mt-8 p-4 sm:p-5">
-      <div className="mb-4 grid gap-3 md:grid-cols-3">
+    <div className="card p-4 sm:p-5">
+      <p className="mb-3 text-sm font-semibold text-gray-700">{t.admin.filtersTitle}</p>
+      <div className="mb-4 grid gap-3 md:grid-cols-4">
         <input
           className="input"
-          placeholder="Search patient / doctor / service"
+          placeholder={t.admin.searchPlaceholder}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
         <select className="input" value={doctor} onChange={(e) => setDoctor(e.target.value)}>
-          {doctors.map((value) => (
+          <option value="ALL">{t.admin.filterDoctor}: {t.admin.all}</option>
+          {doctors.slice(1).map((value) => (
             <option key={value} value={value}>
               {value}
             </option>
@@ -68,14 +74,15 @@ export default function AdminAppointmentsTable({ data }: { data: Appointment[] }
         <select className="input" value={status} onChange={(e) => setStatus(e.target.value as StatusFilter)}>
           {["ALL", "PENDING", "CONFIRMED", "COMPLETED", "CANCELLED"].map((value) => (
             <option key={value} value={value}>
-              {value}
+              {value === "ALL" ? t.admin.all : value}
             </option>
           ))}
         </select>
+        <input type="date" className="input" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} />
       </div>
 
       {filtered.length === 0 ? (
-        <div className="rounded-xl border border-dashed p-8 text-center text-sm text-gray-500">No results found.</div>
+        <div className="rounded-xl border border-dashed p-8 text-center text-sm text-gray-500">{t.admin.noResults}</div>
       ) : (
         <div className="space-y-3">
           {filtered.map((item) => (
@@ -102,7 +109,7 @@ export default function AdminAppointmentsTable({ data }: { data: Appointment[] }
                       disabled={updatingId === item.id}
                       onClick={() => updateStatus(item.id, "CONFIRMED")}
                     >
-                      Confirm
+                      {t.admin.confirm}
                     </button>
                     <button
                       type="button"
@@ -110,7 +117,7 @@ export default function AdminAppointmentsTable({ data }: { data: Appointment[] }
                       disabled={updatingId === item.id}
                       onClick={() => updateStatus(item.id, "CANCELLED")}
                     >
-                      Cancel
+                      {t.admin.cancel}
                     </button>
                   </>
                 ) : null}
@@ -122,7 +129,7 @@ export default function AdminAppointmentsTable({ data }: { data: Appointment[] }
                       disabled={updatingId === item.id}
                       onClick={() => updateStatus(item.id, "COMPLETED")}
                     >
-                      Complete
+                      {t.admin.complete}
                     </button>
                     <button
                       type="button"
@@ -130,7 +137,7 @@ export default function AdminAppointmentsTable({ data }: { data: Appointment[] }
                       disabled={updatingId === item.id}
                       onClick={() => updateStatus(item.id, "CANCELLED")}
                     >
-                      Cancel
+                      {t.admin.cancel}
                     </button>
                   </>
                 ) : null}
@@ -148,7 +155,7 @@ function StatusBadge({ status }: { status: Appointment["status"] }) {
     PENDING: "bg-amber-100 text-amber-700",
     CONFIRMED: "bg-emerald-100 text-emerald-700",
     COMPLETED: "bg-blue-100 text-blue-700",
-    CANCELLED: "bg-gray-200 text-gray-700"
+    CANCELLED: "bg-red-100 text-red-700"
   };
   return <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${classes[status]}`}>{status}</span>;
 }

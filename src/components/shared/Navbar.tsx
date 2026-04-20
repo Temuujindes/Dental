@@ -11,25 +11,33 @@ export default function Navbar() {
   const { t } = useI18n();
 
   return (
-    <nav className="border-b bg-white">
+    <nav className="sticky top-0 z-30 border-b border-gray-200/80 bg-white/90 backdrop-blur">
       <div className="mx-auto flex min-h-16 max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-2">
-        <Link href="/" className="text-lg font-bold text-blue-700">
-          DentaBook
+        <Link href="/" className="text-lg font-bold tracking-tight text-blue-700">
+          {t.common.appName}
         </Link>
         <div className="flex flex-wrap items-center justify-end gap-2 text-sm sm:gap-3">
-          <Link href="/doctors">{t.nav.doctors}</Link>
-          <Link href="/booking">{t.nav.book}</Link>
-          {session ? <Link href="/appointments">{t.nav.appointments}</Link> : null}
-          {isAdmin ? <Link href="/admin">{t.nav.admin}</Link> : null}
+          <Link className="rounded-lg px-2 py-1.5 transition hover:bg-gray-100" href="/doctors">
+            {t.nav.doctors}
+          </Link>
+          <Link className="rounded-lg px-2 py-1.5 transition hover:bg-gray-100" href="/booking">
+            {t.nav.book}
+          </Link>
+          {session ? (
+            <Link className="rounded-lg px-2 py-1.5 transition hover:bg-gray-100" href="/appointments">
+              {t.nav.appointments}
+            </Link>
+          ) : null}
+          {isAdmin ? <Link className="rounded-lg px-2 py-1.5 transition hover:bg-gray-100" href="/admin">{t.nav.admin}</Link> : null}
           <LanguageToggle />
           {session ? (
-            <button onClick={() => signOut()} className="rounded bg-gray-100 px-3 py-1.5">
+            <button onClick={() => signOut()} className="rounded-xl bg-gray-100 px-3 py-1.5 transition hover:bg-gray-200">
               {t.nav.signOut}
             </button>
           ) : (
             <>
-              <Link href="/login">{t.nav.logIn}</Link>
-              <Link href="/register" className="rounded bg-blue-600 px-3 py-1.5 text-white">
+              <Link className="rounded-lg px-2 py-1.5 transition hover:bg-gray-100" href="/login">{t.nav.logIn}</Link>
+              <Link href="/register" className="rounded-xl bg-blue-600 px-3 py-1.5 text-white transition hover:bg-blue-700">
                 {t.nav.signUp}
               </Link>
             </>

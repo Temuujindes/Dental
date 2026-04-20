@@ -1,4 +1,5 @@
-import { addMinutes, format } from "date-fns";
+import { addMinutes, format, parse } from "date-fns";
+import { mn } from "date-fns/locale";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -6,12 +7,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function generateTimeSlots(startHour = 9, endHour = 17, intervalMinutes = 30): string[] {
+export function generateTimeSlots(startTime = "09:00", endTime = "17:00", intervalMinutes = 30): string[] {
   const slots: string[] = [];
-  const start = new Date();
-  start.setHours(startHour, 0, 0, 0);
-  const end = new Date();
-  end.setHours(endHour, 0, 0, 0);
+  const start = parse(startTime, "HH:mm", new Date());
+  const end = parse(endTime, "HH:mm", new Date());
 
   while (start < end) {
     slots.push(format(start, "HH:mm"));
@@ -20,13 +19,19 @@ export function generateTimeSlots(startHour = 9, endHour = 17, intervalMinutes =
   return slots;
 }
 
-export const DENTAL_SERVICES = [
-  "General Checkup",
-  "Teeth Cleaning",
-  "Tooth Extraction",
-  "Root Canal",
-  "Dental Filling",
-  "Teeth Whitening",
-  "Orthodontic Consultation",
-  "Emergency Care"
+export function overlaps(a1: string, a2: string, b1: string, b2: string): boolean {
+  return a1 < b2 && a2 > b1;
+}
+
+export function formatDateMN(date: Date): string {
+  return format(date, "yyyy оны MMMM d", { locale: mn });
+}
+
+export const SERVICES = [
+  "Ерөнхий үзлэг",
+  "Шүд цэвэрлэгэ",
+  "Шүд авалт",
+  "Суурь эмчилгээ",
+  "Шүд цайруулга",
+  "Зөвлөгөө"
 ];

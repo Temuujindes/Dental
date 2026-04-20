@@ -12,22 +12,26 @@ model User {
   email        String        @unique
   password     String
   name         String
+  phone        String?
   role         Role          @default(PATIENT)
   createdAt    DateTime      @default(now())
   appointments Appointment[]
 }
 
 model Doctor {
-  id           String        @id @default(cuid())
-  name         String        @unique
+  id           String           @id @default(cuid())
+  name         String           @unique
   specialty    String
   bio          String
   imageUrl     String?
-  rating       Float         @default(5.0)
+  rating       Float            @default(5.0)
   experience   Int
-  available    Boolean       @default(true)
+  available    Boolean          @default(true)
+  createdAt    DateTime         @default(now())
   appointments Appointment[]
-  createdAt    DateTime      @default(now())
+  schedules    DoctorSchedule[]
+  breakTimes   BreakTime[]
+  blockedSlots BlockedSlot[]
 }
 
 model Appointment {
@@ -45,7 +49,7 @@ model Appointment {
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
 
-  @@index([doctorId, date, startTime])
+  @@unique([doctorId, date, startTime])
 }
 
 enum Role {
@@ -58,4 +62,38 @@ enum AppointmentStatus {
   CONFIRMED
   CANCELLED
   COMPLETED
+}
+
+model DoctorSchedule {
+  id                  String   @id @default(cuid())
+  doctorId            String
+  doctor              Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  dayOfWeek           Int
+  startTime           String
+  endTime             String
+  slotDurationMinutes Int      @default(30)
+
+  @@unique([doctorId, dayOfWeek])
+}
+
+model BreakTime {
+  id        String   @id @default(cuid())
+  doctorId  String
+  doctor    Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  dayOfWeek Int
+  startTime String
+  endTime   String
+
+  @@unique([doctorId, dayOfWeek, startTime])
+}
+
+model BlockedSlot {
+  id        String   @id @default(cuid())
+  doctorId  String
+  doctor    Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  date      DateTime
+  startTime String
+  endTime   String
+  reason    String?
+  createdAt DateTime @default(now())
 }

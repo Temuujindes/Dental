@@ -21,7 +21,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const validTransitions: Record<string, string[]> = {
     PENDING: ["CONFIRMED", "CANCELLED"],
     CONFIRMED: ["COMPLETED", "CANCELLED"],
-    COMPLETED: ["CANCELLED"],
+    COMPLETED: [],
     CANCELLED: []
   };
   if (!validTransitions[current].includes(status)) {
@@ -44,8 +44,12 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
     select: { patientId: true, status: true }
   });
   if (!appointment) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  if (session.user.role !== "ADMIN" && appointment.patientId !== session.user.id) {
+  const isAdmin = session.user.role === "ADMIN";
+  if (!isAdmin && appointment.patientId !== session.user.id) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+  if (!isAdmin && appointment.status !== "PENDING") {
+    return NextResponse.json({ error: "Only pending appointment can be cancelled" }, { status: 409 });
   }
   if (appointment.status === "CANCELLED") {
     return NextResponse.json({ ok: true });

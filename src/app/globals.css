@@ -3,21 +3,21 @@
 @tailwind utilities;
 
 body {
-  @apply bg-gray-50 text-gray-900 antialiased;
+  @apply bg-slate-50 text-gray-900 antialiased;
 }
 
 .card {
-  @apply rounded-2xl border border-gray-200 bg-white shadow-sm;
+  @apply rounded-2xl border border-gray-200/90 bg-white shadow-sm;
 }
 
 .input {
-  @apply w-full rounded-xl border border-gray-300 px-3 py-2.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200;
+  @apply w-full rounded-xl border border-gray-300 px-3 py-2.5 text-sm outline-none transition duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200;
 }
 
 .btn-primary {
-  @apply rounded-xl bg-blue-600 px-4 py-2.5 font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50;
+  @apply rounded-xl bg-blue-600 px-4 py-2.5 font-medium text-white transition duration-200 hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50;
 }
 
 .btn-outline {
-  @apply rounded-xl border border-gray-300 px-4 py-2.5 font-medium text-gray-700 transition hover:bg-gray-100;
+  @apply rounded-xl border border-gray-300 bg-white px-4 py-2.5 font-medium text-gray-700 transition duration-200 hover:bg-gray-100;
 }
