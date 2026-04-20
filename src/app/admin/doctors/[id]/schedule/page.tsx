@@ -31,7 +31,7 @@ export default async function DoctorSchedulePage({ params }: { params: Promise<{
   const { id } = await params;
 
   const doctor = await prisma.doctor.findUnique({ where: { id } });
-  if (!doctor) redirect("/admin/doctors");
+  if (!doctor) redirect("/admin/doctors" as any);
 
   const [schedulesRaw, breaksRaw, blockedSlotsRaw] = await Promise.all([
     prisma.$queryRaw<ScheduleRow[]>`SELECT * FROM "DoctorSchedule" WHERE "doctorId" = ${id} ORDER BY "dayOfWeek" ASC`,
