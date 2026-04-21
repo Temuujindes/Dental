@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 
 type Doctor = {
   id: string;
@@ -37,6 +37,7 @@ export default function AdminDoctorsClient({ initialDoctors }: { initialDoctors:
   const [form, setForm] = useState<FormState>(initialForm);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const sortedDoctors = useMemo(() => [...doctors].sort((a, b) => Number(b.available) - Number(a.available)), [doctors]);
 
@@ -44,20 +45,25 @@ export default function AdminDoctorsClient({ initialDoctors }: { initialDoctors:
     e.preventDefault();
     setSaving(true);
     setError("");
-    const payload = {
-      name: form.name.trim(),
-      specialty: form.specialty.trim(),
-      bio: form.bio.trim(),
-      imageUrl: form.imageUrl.trim() || null,
-      rating: Number(form.rating),
-      experience: Number(form.experience),
-      available: true
-    };
+
+    const formData = new FormData();
+    formData.append("name", form.name.trim());
+    formData.append("specialty", form.specialty.trim());
+    formData.append("bio", form.bio.trim());
+    formData.append("rating", form.rating);
+    formData.append("experience", form.experience);
+    formData.append("available", "true");
+
+    // Add image file if selected
+    const file = fileInputRef.current?.files?.[0];
+    
+    if (file) {
+      formData.append("image", file);
+    }
 
     const res = await fetch("/api/doctors", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+      body: formData
     });
     setSaving(false);
     if (!res.ok) {
@@ -90,43 +96,57 @@ export default function AdminDoctorsClient({ initialDoctors }: { initialDoctors:
 
       <form className="card mt-8 space-y-4 p-5" onSubmit={addDoctor}>
         <h2 className="text-lg font-semibold text-slate-900">Шинэ эмч нэмэх</h2>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-3">
           <div>
             <label className="label">Нэр</label>
             <input className="input" value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} required />
           </div>
-          <div>
+          {/* <div>
             <label className="label">Төрөл</label>
             <input className="input" value={form.specialty} onChange={(e) => setForm((p) => ({ ...p, specialty: e.target.value }))} required />
-          </div>
-          <div>
-            <label className="label">Үнэлгээ</label>
-            <input
-              type="number"
-              min={0}
-              max={5}
-              step={0.1}
-              className="input"
-              value={form.rating}
-              onChange={(e) => setForm((p) => ({ ...p, rating: e.target.value }))}
-              required
-            />
-          </div>
-          <div>
-            <label className="label">Туршлага (жил)</label>
-            <input
-              type="number"
-              min={0}
-              className="input"
-              value={form.experience}
-              onChange={(e) => setForm((p) => ({ ...p, experience: e.target.value }))}
-              required
-            />
+          </div> */}
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div>
+              <label className="label">Үнэлгээ</label>
+              <input
+                type="number"
+                min={0}
+                max={5}
+                step={0.1}
+                className="input"
+                value={form.rating}
+                onChange={(e) => setForm((p) => ({ ...p, rating: e.target.value }))}
+                required
+              />
+            </div>
+            <div>
+              <label className="label">Туршлага (жил)</label>
+              <input
+                type="number"
+                min={0}
+                className="input"
+                value={form.experience}
+                onChange={(e) => setForm((p) => ({ ...p, experience: e.target.value }))}
+                required
+              />
+            </div>
           </div>
         </div>
         <div>
-          <label className="label">Зураг URL (заавал биш)</label>
-          <input className="input" value={form.imageUrl} onChange={(e) => setForm((p) => ({ ...p, imageUrl: e.target.value }))} />
+          <label className="label">Зураг</label>
+          <input 
+            ref={fileInputRef}
+            type="file" 
+            className="input" 
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                setForm((p) => ({ ...p, imageUrl: file.name }));
+              }
+            }}
+          />
+          <p className="mt-1 text-xs text-slate-500">URL-ruu oruulj bolno</p>
         </div>
         <div>
           <label className="label">Танилцуулга</label>

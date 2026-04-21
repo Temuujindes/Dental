@@ -76,13 +76,21 @@ export default function DoctorProfilePage() {
       <section className="card p-5 sm:p-8">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex items-center gap-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 text-xl font-semibold text-blue-700">
-              {doctor.name
-                .split(" ")
-                .slice(0, 2)
-                .map((part) => part[0])
-                .join("")}
-            </div>
+            {doctor.imageUrl ? (
+              <img 
+                src={doctor.imageUrl} 
+                alt={doctor.name}
+                className="h-16 w-16 rounded-full object-cover"
+              />
+            ) : (
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 text-xl font-semibold text-blue-700">
+                {doctor.name
+                  .split(" ")
+                  .slice(0, 2)
+                  .map((part) => part[0])
+                  .join("")}
+              </div>
+            )}
             <div>
               <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{doctor.name}</h1>
               <p className="text-sm text-blue-700">{doctor.specialty}</p>
