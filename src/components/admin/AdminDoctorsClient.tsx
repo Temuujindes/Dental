@@ -6,7 +6,6 @@ import { useMemo, useState, useRef } from "react";
 type Doctor = {
   id: string;
   name: string;
-  specialty: string;
   bio: string;
   imageUrl?: string | null;
   rating: number;
@@ -16,7 +15,6 @@ type Doctor = {
 
 type FormState = {
   name: string;
-  specialty: string;
   bio: string;
   imageUrl: string;
   rating: string;
@@ -25,7 +23,6 @@ type FormState = {
 
 const initialForm: FormState = {
   name: "",
-  specialty: "",
   bio: "",
   imageUrl: "",
   rating: "5",
@@ -48,7 +45,6 @@ export default function AdminDoctorsClient({ initialDoctors }: { initialDoctors:
 
     const formData = new FormData();
     formData.append("name", form.name.trim());
-    formData.append("specialty", form.specialty.trim());
     formData.append("bio", form.bio.trim());
     formData.append("rating", form.rating);
     formData.append("experience", form.experience);
@@ -101,11 +97,7 @@ export default function AdminDoctorsClient({ initialDoctors }: { initialDoctors:
             <label className="label">Нэр</label>
             <input className="input" value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} required />
           </div>
-          {/* <div>
-            <label className="label">Төрөл</label>
-            <input className="input" value={form.specialty} onChange={(e) => setForm((p) => ({ ...p, specialty: e.target.value }))} required />
-          </div> */}
-          <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="grid gap-3 sm:grid-cols-2">
             <div>
               <label className="label">Үнэлгээ</label>
               <input
@@ -162,9 +154,23 @@ export default function AdminDoctorsClient({ initialDoctors }: { initialDoctors:
         {sortedDoctors.map((doctor) => (
           <article key={doctor.id} className="card p-5">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="flex items-center gap-3">
+                {doctor.imageUrl ? (
+                  <img
+                    src={doctor.imageUrl}
+                    alt={doctor.name}
+                    className="h-10 w-10 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-medium bg-blue-50 text-blue-600">
+                    {doctor.name
+                      .split(" ")
+                      .slice(0, 2)
+                      .map((part) => part[0])
+                      .join("")}
+                  </div>
+                )}
                 <p className="text-sm font-medium text-slate-900">{doctor.name}</p>
-                <p className="text-xs text-slate-500">{doctor.specialty}</p>
               </div>
               <span className={`rounded-full px-2 py-1 text-xs ${doctor.available ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-600"}`}>
                 {doctor.available ? "Идэвхтэй" : "Идэвхгүй"}

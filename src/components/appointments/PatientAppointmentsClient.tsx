@@ -11,7 +11,7 @@ type Appointment = {
   endTime: string;
   status: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED";
   service: string;
-  doctor: { name: string; specialty: string };
+  doctor: { name: string };
 };
 
 type Tab = "UPCOMING" | "PAST" | "CANCELLED";
@@ -75,7 +75,6 @@ export default function PatientAppointmentsClient({ appointments }: { appointmen
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <p className="font-semibold text-gray-900">{item.doctor.name}</p>
-                  <p className="text-sm text-blue-700">{item.doctor.specialty}</p>
                   <p className="mt-2 text-sm text-gray-600">
                     {format(new Date(item.date), "PPP")} - {item.startTime} - {item.endTime}
                   </p>

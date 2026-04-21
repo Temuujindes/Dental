@@ -15,7 +15,6 @@ export default async function AdminDoctorsPage() {
     select: {
       id: true,
       name: true,
-      specialty: true,
       bio: true,
       experience: true,
       rating: true,

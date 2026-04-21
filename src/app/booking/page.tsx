@@ -9,7 +9,7 @@ import DoctorCard from "@/components/booking/DoctorCard";
 import SlotGrid from "@/components/booking/SlotGrid";
 import { SERVICES, formatDateMN } from "@/lib/utils";
 
-type Doctor = { id: string; name: string; specialty: string; rating: number; experience: number; bio: string };
+type Doctor = { id: string; name: string; rating: number; experience: number; bio: string };
 type Slot = { startTime: string; endTime: string; isBooked: boolean; isUnavailable: boolean };
 
 function BookingPageContent() {

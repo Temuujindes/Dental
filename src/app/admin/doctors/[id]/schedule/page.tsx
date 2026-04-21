@@ -42,5 +42,5 @@ export default async function DoctorSchedulePage({ params }: { params: Promise<{
   const breaks = breaksRaw.map((item) => ({ ...item, dayOfWeek: dayNameToNumber[item.dayOfWeek] ?? 0 }));
   const blockedSlots = blockedSlotsRaw.map((item) => ({ ...item }));
 
-  return <AdminDoctorScheduleClient doctorId={doctor.id} doctorName={doctor.name} specialty={doctor.specialty} initialSchedules={schedules} initialBreaks={breaks} initialBlocks={blockedSlots} />;
+  return <AdminDoctorScheduleClient doctorId={doctor.id} doctorName={doctor.name} initialSchedules={schedules} initialBreaks={breaks} initialBlocks={blockedSlots} />;
 }

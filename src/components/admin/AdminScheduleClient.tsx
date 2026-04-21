@@ -6,7 +6,6 @@ import { Search } from "lucide-react";
 type Doctor = {
   id: string;
   name: string;
-  specialty: string;
   available: boolean;
 };
 
@@ -54,8 +53,7 @@ export default function AdminScheduleClient({ doctors }: { doctors: Doctor[] }) 
 
   const filteredDoctors = doctors.filter(
     (d) =>
-      d.name.toLowerCase().includes(search.toLowerCase()) ||
-      d.specialty.toLowerCase().includes(search.toLowerCase())
+      d.name.toLowerCase().includes(search.toLowerCase())
   );
 
   async function selectDoctor(doctor: Doctor) {
@@ -66,7 +64,22 @@ export default function AdminScheduleClient({ doctors }: { doctors: Doctor[] }) 
       const res = await fetch(`/api/admin/schedule?doctorId=${doctor.id}`);
       if (!res.ok) throw new Error("Хуваарь авах үед алдаа гарлаа");
       const data = await res.json();
-      setSchedules(data.schedules ?? []);
+      let fetchedSchedules = data.schedules ?? [];
+      
+      // If no schedules found, create default schedule for each day
+      if (fetchedSchedules.length === 0) {
+        const defaultSchedules = [
+          { id: `temp-${doctor.id}-1`, doctorId: doctor.id, dayOfWeek: 1, startTime: "09:00", endTime: "17:00", isWorking: true, slotDurationMinutes: 30 },
+          { id: `temp-${doctor.id}-2`, doctorId: doctor.id, dayOfWeek: 2, startTime: "09:00", endTime: "17:00", isWorking: true, slotDurationMinutes: 30 },
+          { id: `temp-${doctor.id}-3`, doctorId: doctor.id, dayOfWeek: 3, startTime: "09:00", endTime: "17:00", isWorking: true, slotDurationMinutes: 30 },
+          { id: `temp-${doctor.id}-4`, doctorId: doctor.id, dayOfWeek: 4, startTime: "09:00", endTime: "17:00", isWorking: true, slotDurationMinutes: 30 },
+          { id: `temp-${doctor.id}-5`, doctorId: doctor.id, dayOfWeek: 5, startTime: "09:00", endTime: "17:00", isWorking: true, slotDurationMinutes: 30 },
+          { id: `temp-${doctor.id}-6`, doctorId: doctor.id, dayOfWeek: 6, startTime: "09:00", endTime: "17:00", isWorking: true, slotDurationMinutes: 30 },
+        ];
+        fetchedSchedules = defaultSchedules;
+      }
+      
+      setSchedules(fetchedSchedules);
       setBreaks(data.breaks ?? []);
       setBlocks(data.blockedSlots ?? []);
     } catch (err) {
@@ -184,7 +197,6 @@ export default function AdminScheduleClient({ doctors }: { doctors: Doctor[] }) 
               }`}
             >
               <p className="text-sm font-medium text-slate-900">{doctor.name}</p>
-              <p className="text-xs text-slate-500">{doctor.specialty}</p>
             </button>
           ))}
           {filteredDoctors.length === 0 && (

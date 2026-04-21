@@ -10,7 +10,6 @@ import { useI18n } from "@/components/shared/I18nProvider";
 type Doctor = {
   id: string;
   name: string;
-  specialty: string;
   bio: string;
   imageUrl?: string | null;
   experience: number;
@@ -93,7 +92,6 @@ export default function DoctorProfilePage() {
             )}
             <div>
               <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{doctor.name}</h1>
-              <p className="text-sm text-blue-700">{doctor.specialty}</p>
             </div>
           </div>
           <div className="rounded-xl bg-amber-50 px-3 py-2 text-sm font-medium text-amber-700">

@@ -13,7 +13,7 @@ type Appointment = {
   endTime: string;
   service: string;
   patient: { name: string; email: string };
-  doctor: { name: string; specialty: string };
+  doctor: { name: string };
 };
 
 type DashboardData = {

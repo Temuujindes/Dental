@@ -224,8 +224,7 @@ export async function createBooking(request: BookingRequest) {
       doctor: {
         select: {
           id: true,
-          name: true,
-          specialty: true
+          name: true
         }
       }
     }

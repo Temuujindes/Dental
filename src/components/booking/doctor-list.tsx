@@ -6,7 +6,6 @@ import { Star, MapPin, Clock, User, Search } from 'lucide-react'
 interface Doctor {
   id: string
   name: string
-  specialty: string
   bio: string
   imageUrl?: string
   rating: number
@@ -24,14 +23,12 @@ export default function DoctorList({ onDoctorSelect, selectedDoctorId }: DoctorL
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [search, setSearch] = useState('')
-  const [selectedSpecialty, setSelectedSpecialty] = useState('')
 
   const fetchDoctors = async () => {
     try {
       setLoading(true)
       const params = new URLSearchParams()
       if (search) params.append('search', search)
-      if (selectedSpecialty) params.append('specialty', selectedSpecialty)
       params.append('available', 'true')
 
       const response = await fetch(`/api/doctors?${params}`)
@@ -48,9 +45,7 @@ export default function DoctorList({ onDoctorSelect, selectedDoctorId }: DoctorL
 
   useEffect(() => {
     fetchDoctors()
-  }, [search, selectedSpecialty])
-
-  const specialties = [...new Set(doctors.map(d => d.specialty))]
+  }, [search])
 
   if (loading) {
     return (
@@ -79,18 +74,6 @@ export default function DoctorList({ onDoctorSelect, selectedDoctorId }: DoctorL
               />
             </div>
           </div>
-          <select
-            value={selectedSpecialty}
-            onChange={(e) => setSelectedSpecialty(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="">Бүх мэргэжил</option>
-            {specialties.map(specialty => (
-              <option key={specialty} value={specialty}>
-                {specialty}
-              </option>
-            ))}
-          </select>
         </div>
       </div>
 
@@ -152,8 +135,6 @@ export default function DoctorList({ onDoctorSelect, selectedDoctorId }: DoctorL
                         </span>
                       )}
                     </div>
-                    
-                    <p className="text-sm text-gray-600 mb-2">{doctor.specialty}</p>
                     
                     <div className="flex items-center gap-4 text-sm text-gray-500">
                       <div className="flex items-center gap-1">

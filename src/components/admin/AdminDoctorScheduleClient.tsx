@@ -34,14 +34,12 @@ const dayNames = ["Ням", "Даваа", "Мягмар", "Лхагва", "Пү�
 export default function AdminDoctorScheduleClient({
   doctorId,
   doctorName,
-  specialty,
   initialSchedules,
   initialBreaks,
   initialBlocks
 }: {
   doctorId: string;
   doctorName: string;
-  specialty: string;
   initialSchedules: Schedule[];
   initialBreaks: BreakItem[];
   initialBlocks: BlockItem[];
@@ -128,7 +126,6 @@ export default function AdminDoctorScheduleClient({
   return (
     <div className="section pb-20 md:pb-10">
       <h1 className="page-title">{doctorName} — Хуваарь</h1>
-      <p className="page-sub">{specialty}</p>
 
       <section className="card mt-8 p-5">
         <h2 className="text-lg font-semibold text-slate-900">А. Долоо хоногийн хуваарь</h2>

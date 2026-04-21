@@ -26,7 +26,7 @@ export default async function AdminPage() {
 
   const appointments = await prisma.appointment.findMany({
     include: {
-      doctor: { select: { name: true, specialty: true } },
+      doctor: { select: { name: true } },
       patient: { select: { name: true, email: true } }
     },
     orderBy: [{ date: "desc" }, { startTime: "desc" }],

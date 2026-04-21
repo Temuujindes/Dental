@@ -12,7 +12,6 @@ interface TimeSlot {
 interface Doctor {
   id: string
   name: string
-  specialty: string
 }
 
 interface BookingFormProps {
@@ -131,7 +130,6 @@ export default function BookingForm({
             <div>
               <p className="text-gray-600">Эмч:</p>
               <p className="font-medium text-gray-900">{doctor.name}</p>
-              <p className="text-gray-600">{doctor.specialty}</p>
             </div>
             <div>
               <p className="text-gray-600">Цаг:</p>

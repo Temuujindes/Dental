@@ -12,7 +12,7 @@ type Appointment = {
   status: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED";
   service: string;
   patient: { name: string; email: string };
-  doctor: { name: string; specialty: string };
+  doctor: { name: string };
 };
 
 type StatusFilter = "ALL" | Appointment["status"];

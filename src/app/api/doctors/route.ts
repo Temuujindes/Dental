@@ -9,7 +9,7 @@ export async function GET() {
   const doctors = await prisma.doctor.findMany({
     where: { available: true },
     orderBy: { rating: "desc" },
-    select: { id: true, name: true, specialty: true, bio: true, imageUrl: true, experience: true, rating: true, available: true }
+    select: { id: true, name: true, bio: true, imageUrl: true, experience: true, rating: true, available: true }
   });
   return NextResponse.json(doctors);
 }
@@ -57,8 +57,8 @@ export async function POST(request: Request) {
     // Create data URL (this will store the actual image)
     imageUrl = `data:${mimeType};base64,${base64}`;
   } else {
-    // Generate placeholder avatar when no file uploaded
-    imageUrl = `https://picsum.photos/seed/${encodeURIComponent(validated.name)}/200/200.jpg`;
+    // No image uploaded - leave as null for frontend placeholder
+    imageUrl = null;
   }
 
   const doctorPayload = {

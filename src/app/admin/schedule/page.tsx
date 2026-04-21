@@ -16,7 +16,6 @@ export default async function AdminSchedulePage() {
     select: {
       id: true,
       name: true,
-      specialty: true,
       available: true
     }
   });
